@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Vices</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    /* Message */
+    #message {
+       color: black;
+        font-size: clamp(16px, 4vw, 20px);
+        margin-bottom: 10px;
+        height: 24px;
+    }
+
+    /* Numbers */
+    #numbers {
+        color: black;
+        font-size: clamp(24px, 8vw, 60px);
+        margin: 15px;
+    }
+
+    /* Controls */
+    #controls {
+        margin-top: 30px;
+        transition: opacity 0.5s;
+    }
+
+    .hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    button {
+        font-size: clamp(12px, 4vw, 16px);
+        padding: clamp(6px, 2vw, 12px);
+        margin: 5px;
+        cursor: pointer;
+        border-radius: 10px;
+    }
+
+    input {
+        font-size: clamp(12px, 4vw, 16px);
+        padding: 5px;
+        width: 120px;
+        text-align: center;
+    }
+
+    /* Timer button states */
+    #timerBtn {
+        background-color: #eee;
+    }
+
+    #timerBtn.active {
+        background-color: #4CAF50;
+        color: white;
+    }
+</style>
+</head>
+
+<body>
+
+<h2></h2>
+
+<div id="message"></div>
+<div id="numbers"></div>
+
+<div id="controls">
+    <button onclick="previous()">⬅️</button>
+    <button id="timerBtn" onclick="toggleTimer()">⏱️ Automatique</button>
+    <button onclick="next()">➡️</button>
+
+    <br><br>
+
+    Timer (ms):
+    <input type="number" id="timerInput" value="969.6969">
+</div>
+
+<script>
+ const numbers = [319817318,71381921,1489999,8888,100110510,7819019425,71042,7193718,14888948,71931,5333353,"518 712 618 44,148543292,8142543,"528 419 319718 23",4748132148,91371985,5148123,"51 948 191 711 81","891 019 4918808",548317489417,49181951749814,"61 988 184 161","E = VS","498716988 079","741 741 741","889 8",1231115025];
+
+    let index = 0;
+    const displayCount = 1;
+
+    let messageTimeout;
+    let timerInterval = null;
+    let isTimerRunning = false;
+    let hideControlsTimeout;
+
+    function getMessage(slice) {
+                     if (slice.includes(xxx)) return "1 - Rajeunissment";
+        return "Numbers displayed";
+    }
+
+    function showNumbers() {
+        const slice = numbers.slice(index, index + displayCount);
+        document.getElementById("numbers").innerText = slice.join(", ");
+
+        const messageDiv = document.getElementById("message");
+
+        if (isTimerRunning) {
+            messageDiv.innerText = "";
+        } else {
+            messageDiv.innerText = getMessage(slice);
+
+            clearTimeout(messageTimeout);
+            messageTimeout = setTimeout(() => {
+                messageDiv.innerText = "";
+            }, 5000);
+        }
+
+        if (!isTimerRunning) {
+            showControlsTemporarily();
+        }
+    }
+
+    function next() {
+        stopTimer();
+
+        if (index + displayCount < numbers.length) {
+            index += displayCount;
+        } else {
+            index = 0;
+        }
+
+        showNumbers();
+    }
+
+    function previous() {
+        stopTimer();
+
+        if (index - displayCount >= 0) {
+            index -= displayCount;
+        } else {
+            index = numbers.length - displayCount;
+        }
+
+        showNumbers();
+    }
+
+    function toggleTimer() {
+        const controls = document.getElementById("controls");
+        const btn = document.getElementById("timerBtn");
+
+        if (timerInterval) {
+            // STOP
+            stopTimer();
+            showControlsTemporarily();
+        } else {
+            let timerValue = parseInt(document.getElementById("timerInput").value);
+
+            if (isNaN(timerValue) || timerValue <= 0) {
+                timerValue = 5000;
+            }
+
+            isTimerRunning = true;
+
+            // ✅ Activate button
+            btn.classList.add("active");
+            btn.innerText = "⏸️ En cours";
+
+            // Hide controls
+            controls.classList.add("hidden");
+
+            timerInterval = setInterval(() => {
+                if (index + displayCount < numbers.length) {
+                    index += displayCount;
+                } else {
+                    index = 0;
+                }
+
+                showNumbers();
+            }, timerValue);
+        }
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        isTimerRunning = false;
+
+        const btn = document.getElementById("timerBtn");
+
+        // ✅ Reset button
+        btn.classList.remove("active");
+        btn.innerText = "⏱️ Automatique";
+    }
+
+    function showControlsTemporarily() {
+        const controls = document.getElementById("controls");
+
+        controls.classList.remove("hidden");
+
+        clearTimeout(hideControlsTimeout);
+
+        hideControlsTimeout = setTimeout(() => {
+            controls.classList.add("hidden");
+        }, 5000);
+    }
+
+    // ✅ Always allow showing controls on tap
+    document.addEventListener("click", showControlsTemporarily);
+    document.addEventListener("touchstart", showControlsTemporarily);
+
+    // Initial display
+    showNumbers();
+</script>
+
+</body>
+</html>
